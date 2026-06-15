@@ -1,0 +1,35 @@
+name: refresh-carry-data
+
+# Weekly rebuild of the carry-check page from public Binance data. Commits the
+# updated index.html + carry-data.json; a repo-connected static host redeploys
+# on the push. The page is a dated weekly illustration, not a live feed.
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'   # Mondays 06:17 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild
+        run: python3 build.py
+      - name: Commit if changed
+        run: |
+          if [ -n "$(git status --porcelain index.html carry-data.json)" ]; then
+            git config user.name  "carryscope-bot"
+            git config user.email "noreply@carryscope"
+            git add index.html carry-data.json
+            git commit -m "chore: weekly carry-data refresh"
+            git push
+          else
+            echo "No change in carry numbers this week."
+          fi

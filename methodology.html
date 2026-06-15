@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CarryScope: How we compute carry (the honest number)</title>
+<meta name="description" content="How CarryScope computes net-of-cost, risk-adjusted carry, with a worked example. Nothing hidden." />
+<style>
+  :root{--ink:#0e1116;--mut:#5b6573;--line:#e3e7ec;--bg:#fafbfc;--accent:#0b5fff;--good:#0a7d3c;--bad:#b3261e}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  header{padding:48px 0 8px}
+  .brand{font-weight:700;letter-spacing:-.02em;font-size:20px}
+  a{color:var(--accent)}
+  h1{font-size:30px;line-height:1.2;letter-spacing:-.02em;margin:18px 0 6px}
+  h2{font-size:20px;margin:30px 0 10px}
+  code,pre{background:#f0f2f5;border-radius:6px;font-size:14px}
+  code{padding:1px 5px} pre{padding:12px 14px;overflow:auto}
+  table{width:100%;border-collapse:collapse;margin:10px 0}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+  th{font-size:13px;color:var(--mut)}
+  .good{color:var(--good);font-weight:600} .bad{color:var(--bad);font-weight:600}
+  .mut{color:var(--mut)} .fine{font-size:13px;color:var(--mut)}
+  footer{padding:28px 0 64px;border-top:1px solid var(--line);margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><a href="index.html" style="text-decoration:none;color:inherit">CarryScope</a></div>
+    <h1>How we compute carry (the honest number)</h1>
+    <p class="mut">The method behind every number, and the <a href="https://github.com/ionutcricoveanu/carryscope-methodology">open-source script</a> that reproduces it. Because a number you can't reproduce isn't worth trusting. <a href="index.html">← back to the live check</a></p>
+  </header>
+
+  <h2>The problem with the headline funding rate</h2>
+  <p>Crypto dashboards show <strong>funding APY</strong> (the rate longs and shorts pay each other on perpetual futures) as if it were clean yield. It isn't: it's <strong>gross</strong> (before the fees and spread you actually pay), it's <strong>not risk-adjusted</strong>, and it ignores <strong>regime</strong> (funding compresses, and the headline doesn't say when the edge is gone).</p>
+
+  <h2>The position we measure</h2>
+  <p>A <strong>delta-neutral carry book</strong>: long 1 unit of spot, short 1 unit of the perpetual, rehedged 1:1 each funding settlement (every 8 hours). Price cancels, so the only things that move P&amp;L are the <strong>funding you receive</strong> and the drift in the <strong>basis</strong> = <code>(spot − perp) / perp</code>. Per 8-hour settlement, while the position is on:</p>
+  <pre>step P&amp;L  =  funding_rate  +  (basis_now − basis_last)
+cost/leg =  taker fee (0.075%)  +  basis half-spread (at least 2 bp)</pre>
+  <p>From the per-settlement P&amp;L we annualize the <strong>net APY</strong>. For subscribers we also compute <strong>Sharpe</strong> against a 4.5% risk-free rate, <strong>max drawdown</strong>, a <strong>bear-market drawdown</strong>, and a <strong>hedge-integrity</strong> check (is your "neutral" book secretly carrying directional risk?).</p>
+
+  <h2>A worked example (BTC &amp; ETH, public data, 2026-06-15)</h2>
+  <table>
+    <thead><tr><th>Asset</th><th>Gross funding APY <span class="mut">(headline)</span></th><th>Net of costs</th><th>vs 4.5% risk-free</th></tr></thead>
+    <tbody>
+      <tr><td>BTC</td><td>+3.98%</td><td class="good">+0.93%</td><td>below</td></tr>
+      <tr><td>ETH</td><td>+2.80%</td><td class="bad">−0.11%</td><td>below</td></tr>
+    </tbody>
+  </table>
+  <p>The measured spot to perp basis was small (single-digit basis points, as expected on liquid majors), and the hedge held. So on that snapshot, funding carry on BTC/ETH was <strong>not worth it</strong>: the net number sat below what you'd earn risk-free. That's the call the headline +3.98% would never let you make. <span class="fine">(The <a href="index.html">live check</a> shows the current week's numbers, which will differ.)</span></p>
+
+  <h2>What this is honest about</h2>
+  <ul>
+    <li>This shows the metric is <strong>real and computable</strong>, not that carry is a good strategy in general. Whether delta-neutral carry has a durable, risk-adjusted edge across years (and through a bear market) is a separate, longer question, and we won't pretend a snapshot answers it.</li>
+    <li>The example uses <strong>public data for illustration</strong>. The product runs on <strong>licensed</strong> market data.</li>
+    <li>We're <strong>analytics only</strong>: no execution, no custody, no advice. We give you the honest number; the decision is yours.</li>
+  </ul>
+
+  <h2>Reproduce it yourself</h2>
+  <p>The exact script that produces these numbers is open source (MIT): <a href="https://github.com/ionutcricoveanu/carryscope-methodology">github.com/ionutcricoveanu/carryscope-methodology</a>. No API key, no dependencies. Run it and you'll get today's number, not ours.</p>
+
+  <footer>
+    <p class="fine"><strong>CarryScope is an analytics tool.</strong> Not financial advice, not a broker, not a custodian. Crypto carry involves real risk including liquidation and loss. Figures are informational and may be delayed or wrong; verify before trading.</p>
+  </footer>
+</div>
+</body>
+</html>

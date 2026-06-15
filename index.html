@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CarryScope: Is crypto carry worth it right now?</title>
+<meta name="description" content="The honest, net-of-cost answer to whether BTC/ETH funding carry is worth it right now. Analytics only. Updated weekly." />
+<!--
+  Generated from index.template.html by build.py. Do not hand-edit.
+  Numbers are a dated weekly illustration computed from public Binance data, not a live feed.
+-->
+<style>
+  :root{--ink:#0e1116;--mut:#5b6573;--line:#e3e7ec;--good:#0a7d3c;--bad:#b3261e;--bg:#fafbfc;--accent:#0b5fff}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  header{padding:52px 0 8px}
+  .brand{font-weight:700;letter-spacing:-.02em;font-size:20px}
+  .pill{display:inline-block;font-size:12px;color:var(--mut);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+  h1{font-size:32px;line-height:1.2;letter-spacing:-.02em;margin:24px 0 6px}
+  .asof{font-size:13px;color:var(--mut);margin:0 0 22px}
+  .cards{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 8px}
+  .card{flex:1 1 300px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .sym{font-weight:700;font-size:18px;margin:0 0 10px}
+  .verdict{display:inline-block;font-weight:700;font-size:13px;padding:3px 10px;border-radius:999px;margin-bottom:12px}
+  .verdict.good{background:#e7f5ec;color:var(--good)}
+  .verdict.bad{background:#fdeceb;color:var(--bad)}
+  table{width:100%;border-collapse:collapse}
+  td{padding:6px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+  td.k{color:var(--mut)} td.v{text-align:right;font-weight:600}
+  .v.bad{color:var(--bad)} .v.good{color:var(--good)}
+  section{padding:30px 0;border-top:1px solid var(--line)}
+  h2{font-size:20px;margin:0 0 12px}
+  ol{padding-left:20px} ol li{margin:7px 0}
+  form{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 6px}
+  input[type=email]{flex:1 1 240px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:16px}
+  button{padding:12px 18px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
+  .fine{font-size:13px;color:var(--mut);margin:4px 0 0}
+  a{color:var(--accent)}
+  footer{padding:30px 0 64px;border-top:1px solid var(--line)}
+  .disc{font-size:12.5px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">CarryScope</div>
+    <span class="pill">Analytics only · no execution, custody, or advice</span>
+    <h1>Is crypto carry worth it right now?</h1>
+    <p class="asof">The honest, <strong>net-of-cost</strong> answer for BTC &amp; ETH funding carry. Computed from public data · window 2026-05-16 → 2026-06-15 · <strong>as of 2026-06-15</strong>, updated weekly.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="sym">Bitcoin (BTC)</div>
+        <span class="verdict bad">Not worth it right now</span>
+        <table>
+          <tr><td class="k">Funding APY (the headline)</td><td class="v">+3.98%</td></tr>
+          <tr><td class="k">Net of costs (what you'd keep)</td><td class="v bad">+0.93%</td></tr>
+          <tr><td class="k">Risk-free reference</td><td class="v">~4.5%</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="sym">Ethereum (ETH)</div>
+        <span class="verdict bad">Not worth it right now</span>
+        <table>
+          <tr><td class="k">Funding APY (the headline)</td><td class="v">+2.80%</td></tr>
+          <tr><td class="k">Net of costs (what you'd keep)</td><td class="v bad">-0.11%</td></tr>
+          <tr><td class="k">Risk-free reference</td><td class="v">~4.5%</td></tr>
+        </table>
+      </div>
+    </div>
+    <p class="fine">The funding dashboards traders already use show you the <strong>gross</strong> number (the top row). CarryScope subtracts the costs those dashboards leave out: trading fees and the basis half-spread. When the net (the middle row) sits below the risk-free rate, the carry isn't paying you for the operational risk. <a href="methodology.html">How this is computed →</a></p>
+  </header>
+
+  <section>
+    <h2>Get told when it flips</h2>
+    <p class="fine" style="margin-bottom:10px">Drop your email for a heads-up when BTC/ETH carry turns worth-it (or stops being). Plus first access when more symbols and the risk-adjusted view (Sharpe, drawdown, bear-stress) launch.</p>
+    <!-- TALLY WAITLIST: form NpOO2b. To change it, swap the embed src below (Tally → Share → Embed). -->
+    <iframe data-tally-src="https://tally.so/embed/NpOO2b?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+            loading="lazy" width="100%" height="421" frameborder="0" title="CarryScope waitlist"></iframe>
+    <p class="fine">No spam. One email when something changes.</p>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <ol>
+      <li><strong>Same data, honest math.</strong> We start from the same funding and basis rate the popular funding dashboards show you, then subtract the costs those dashboards leave out: trading fees and the basis half-spread.</li>
+      <li><strong>We compare it to risk-free.</strong> A carry below what you'd earn risk-free isn't worth the liquidation and operational risk.</li>
+      <li><strong>Coming for subscribers:</strong> risk-adjusted columns (Sharpe, max drawdown, a bear-market drawdown), a regime signal, alerts, and more symbols.</li>
+    </ol>
+    <p class="fine">We show exactly how every number is computed, and the script that reproduces it is <a href="https://github.com/ionutcricoveanu/carryscope-methodology">open source</a>. <a href="methodology.html">Read the methodology →</a></p>
+  </section>
+
+  <footer>
+    <p class="disc"><strong>CarryScope is an analytics tool.</strong> Not financial advice, not a broker, not a custodian; it does not execute trades. Crypto carry involves real risk including liquidation and loss. Figures are a dated illustration computed from public market data on the date shown, updated weekly. They may be delayed or wrong; verify before trading. Not a live feed.</p>
+  </footer>
+
+</div>
+<script async src="https://tally.so/widgets/embed.js"></script>
+</body>
+</html>
