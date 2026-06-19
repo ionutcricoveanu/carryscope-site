@@ -1,21 +1,21 @@
 {
-  "as_of": "2026-06-16",
-  "window": "2026-05-17 \u2192 2026-06-16",
+  "as_of": "2026-06-19",
+  "window": "2026-05-21 \u2192 2026-06-19",
   "risk_free_apy": 4.5,
   "symbols": {
     "BTC": {
-      "gross_fund_apy": 3.76,
-      "net_apy": 0.67,
-      "first": "2026-05-17",
-      "last": "2026-06-16",
+      "gross_fund_apy": 3.32,
+      "net_apy": 0.07,
+      "first": "2026-05-21",
+      "last": "2026-06-19",
       "verdict": "Not worth it right now",
       "verdict_class": "bad"
     },
     "ETH": {
-      "gross_fund_apy": 2.67,
-      "net_apy": -0.23,
-      "first": "2026-05-17",
-      "last": "2026-06-16",
+      "gross_fund_apy": 2.31,
+      "net_apy": -0.49,
+      "first": "2026-05-21",
+      "last": "2026-06-19",
       "verdict": "Not worth it right now",
       "verdict_class": "bad"
     }
