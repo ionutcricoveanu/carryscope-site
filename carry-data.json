@@ -1,21 +1,28 @@
 {
-  "as_of": "2026-06-19",
-  "window": "2026-05-21 \u2192 2026-06-19",
+  "as_of": "2026-07-04",
+  "window": "2026-06-04 \u2192 2026-07-04",
   "risk_free_apy": 4.5,
+  "data_source": "Binance public dumps (data.binance.vision) + spot mirror (data-api.binance.vision); funding since the last monthly dump reconstructed from premium-index data and validated in-build against the most recent settled month",
   "symbols": {
     "BTC": {
-      "gross_fund_apy": 3.32,
-      "net_apy": 0.07,
-      "first": "2026-05-21",
-      "last": "2026-06-19",
+      "gross_fund_apy": 2.45,
+      "net_apy": -1.23,
+      "settles_used": 90,
+      "settles_reconstructed": 10,
+      "settles_missing_basis": 3,
+      "first": "2026-06-04",
+      "last": "2026-07-04",
       "verdict": "Not worth it right now",
       "verdict_class": "bad"
     },
     "ETH": {
-      "gross_fund_apy": 2.31,
-      "net_apy": -0.49,
-      "first": "2026-05-21",
-      "last": "2026-06-19",
+      "gross_fund_apy": 0.44,
+      "net_apy": -3.06,
+      "settles_used": 90,
+      "settles_reconstructed": 10,
+      "settles_missing_basis": 3,
+      "first": "2026-06-04",
+      "last": "2026-07-04",
       "verdict": "Not worth it right now",
       "verdict_class": "bad"
     }

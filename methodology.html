@@ -57,6 +57,7 @@ cost/leg =  taker fee (0.075%)  +  basis half-spread (at least 2 bp)</pre>
   <ul>
     <li>This shows the metric is <strong>real and computable</strong>, not that carry is a good strategy in general. Whether delta-neutral carry has a durable, risk-adjusted edge across years (and through a bear market) is a separate, longer question, and we won't pretend a snapshot answers it.</li>
     <li>The example uses <strong>public data for illustration</strong>. The product runs on <strong>licensed</strong> market data.</li>
+    <li>The weekly numbers come from Binance's published public data files, which lag by about a day. Settled funding rates are used wherever Binance has published them; because those publish monthly, the most recent days are <strong>reconstructed</strong> from premium-index data using Binance's own funding formula. Every build validates the reconstruction against the most recent settled month and refuses to publish if it drifts (observed aggregate impact: under 0.1 percentage points of APY). The page tells you how many settlements were reconstructed in <a href="carry-data.json">carry-data.json</a>.</li>
     <li>We're <strong>analytics only</strong>: no execution, no custody, no advice. We give you the honest number; the decision is yours.</li>
   </ul>
 
