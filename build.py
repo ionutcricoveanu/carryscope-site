@@ -53,6 +53,10 @@ VAL_MIN_SETTLES = 30
 VAL_MAX_MEDIAN_ERR = 2e-5
 VAL_MAX_ERR = 1e-4
 VAL_MAX_DRIFT_PP = 0.15    # |aggregate signed error|, annualized, %-points
+# The validation window must be genuinely recent: monthly funding dumps only appear
+# after month end, so a naive "last N settled" window silently freezes mid-month and
+# re-scores the same stale settles every run. Fail loudly instead.
+VAL_MAX_WINDOW_AGE_DAYS = 45
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -169,7 +173,21 @@ def reconstruct_rate(premium, t_ms, interval_h):
 
 
 def validate_reconstruction(sym, settled, premium):
-    """Reconstruct the last <=N_SETTLES settled settles and gate on the error."""
+    """Reconstruct the last <=N_SETTLES settled settles and gate on the error.
+
+    Also gates on the *age* of the validation window: Binance publishes fundingRate
+    only as monthly dumps, so from the 1st of a month until the previous month's dump
+    lands, `settled` stops advancing. Without this check the build re-validates an
+    unchanging window every week and any verdict it reaches (pass or fail) is stale.
+    """
+    age_days = (datetime.now(timezone.utc)
+                - datetime.fromtimestamp(settled[-1][0] / 1000, tz=timezone.utc)).days
+    if age_days > VAL_MAX_WINDOW_AGE_DAYS:
+        raise RuntimeError(
+            f"{sym}: newest settled funding is {age_days}d old "
+            f"(>{VAL_MAX_WINDOW_AGE_DAYS}d) — the monthly dump for the intervening "
+            f"period has not been published, so the reconstruction cannot be validated "
+            f"against fresh data; not publishing")
     errs = []
     for t_ms, rate, ivh in settled[-N_SETTLES:]:
         f = reconstruct_rate(premium, t_ms, ivh)
@@ -183,12 +201,18 @@ def validate_reconstruction(sym, settled, premium):
     drift_pp = abs(sum(errs)) / (len(errs) * ivh / 24.0) * DAYS_PER_YEAR * 100.0
     print(f"{sym}: reconstruction check on {len(errs)} settled settles: "
           f"median={ae[len(ae)//2]:.1e} max={ae[-1]:.1e} drift={drift_pp:.3f}pp")
-    if (ae[len(ae)//2] > VAL_MAX_MEDIAN_ERR or ae[-1] > VAL_MAX_ERR
-            or drift_pp > VAL_MAX_DRIFT_PP):
+    # Report only the breached condition(s): listing all three regardless of which
+    # fired makes a single marginal breach read as a total method failure.
+    failed = []
+    if ae[len(ae)//2] > VAL_MAX_MEDIAN_ERR:
+        failed.append(f"median {ae[len(ae)//2]:.2e}>{VAL_MAX_MEDIAN_ERR:.0e}")
+    if ae[-1] > VAL_MAX_ERR:
+        failed.append(f"max {ae[-1]:.2e}>{VAL_MAX_ERR:.0e}")
+    if drift_pp > VAL_MAX_DRIFT_PP:
+        failed.append(f"drift {drift_pp:.3f}pp>{VAL_MAX_DRIFT_PP}pp")
+    if failed:
         raise RuntimeError(f"{sym}: funding reconstruction failed the acceptance gate "
-                           f"(median {ae[len(ae)//2]:.2e}>{VAL_MAX_MEDIAN_ERR:.0e} or "
-                           f"max {ae[-1]:.2e}>{VAL_MAX_ERR:.0e} or "
-                           f"drift {drift_pp:.3f}pp>{VAL_MAX_DRIFT_PP}pp) — not publishing")
+                           f"({'; '.join(failed)}) — not publishing")
 
 
 def fetch_funding(sym, limit):
