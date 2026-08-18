@@ -117,13 +117,21 @@ def fetch_settled_funding(sym):
 
 
 def fetch_premium_1m(sym):
-    """{minute_open_ms: premium_index_close} from daily dumps; missing days skipped."""
+    """{minute_open_ms: premium_index_midpoint} from daily dumps; missing days skipped.
+
+    Binance's funding average samples the premium index every 5s (12 samples per
+    minute, weighted 1..5760 over 8h). The kline *close* is the minute's last 5s
+    sample, so using it shifts the whole average ~27s late and systematically
+    biases reconstructed funding (measured +0.55%..2% of rate magnitude, Jun-Jul
+    2026). The minute midpoint (open+close)/2 estimates the minute's sample mean
+    under a linear within-minute path and removes that bias (T5, research note
+    2026-08-18)."""
     out = {}
     for d in _utc_days_back(PREMIUM_DAYS):
         rows = _get_zip_csv(f"{VISION}/futures/um/daily/premiumIndexKlines/{sym}/1m/"
                             f"{sym}-1m-{d}.zip")
         for r in rows or []:
-            out[int(r[0])] = float(r[4])
+            out[int(r[0])] = (float(r[1]) + float(r[4])) / 2
     return out
 
 
@@ -155,7 +163,10 @@ def fetch_spot_1h(sym, start_ms, end_ms):
 # ---- funding reconstruction (Binance published formula) -----------------------
 def reconstruct_rate(premium, t_ms, interval_h):
     """F = weighted-avg premium over [T-interval, T) + clamp(interest - avg, +-0.05%).
-    Weights rise linearly toward T (Binance's time-weighted average premium index)."""
+
+    Binance's published average weights 5s samples 1..5760 over the window; minute i
+    (0-based, oldest first) holds samples 12i+1..12i+12, whose weights sum to
+    12*(12i+6.5) — hence per-minute weight 12i+6.5 on the minute's midpoint value."""
     T = (t_ms // 60000) * 60000
     n = interval_h * 60
     num = den = have = 0
@@ -163,8 +174,8 @@ def reconstruct_rate(premium, t_ms, interval_h):
         c = premium.get(T - 60000 * (n - i))
         if c is None:
             continue
-        num += (i + 1) * c
-        den += (i + 1)
+        num += (12 * i + 6.5) * c
+        den += (12 * i + 6.5)
         have += 1
     if have < MIN_WINDOW_COVERAGE * n:
         return None
